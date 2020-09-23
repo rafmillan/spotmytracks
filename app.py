@@ -10,19 +10,6 @@ import spotipy.util as util
 from flask import Flask, render_template, url_for, request, redirect, session
 import time
 
-username = ""
-list_of_results = []
-list_of_artist_names = []
-list_of_artist_uri = []
-list_of_song_names = []
-list_of_song_uri = []
-list_of_durations_ms = []
-list_of_explicit = []
-list_of_albums = []
-list_of_popularity = []
-list_of_artwork = []
-list_of_release_dates = []
-
 app = Flask(__name__)
 
 app.secret_key = 'key'
@@ -76,6 +63,19 @@ def api_callback():
 def index():
     print("/index")
 
+    username = ""
+    list_of_results = []
+    list_of_artist_names = []
+    list_of_artist_uri = []
+    list_of_song_names = []
+    list_of_song_uri = []
+    list_of_durations_ms = []
+    list_of_explicit = []
+    list_of_albums = []
+    list_of_popularity = []
+    list_of_artwork = []
+    list_of_release_dates = []
+
     session['token_info'], authorized = get_token(session)
     session.modified = True
     if not authorized:
@@ -105,7 +105,38 @@ def index():
     user_display_name = userData[0]["display_name"]
     print(user_display_name+ "'s Top Songs!" )
 
-    fillData(list_of_results)
+    for result in list_of_results:
+
+        this_artists_name = result["artists"][0]["name"]
+        list_of_artist_names.append(this_artists_name)
+
+        this_artists_uri = result["artists"][0]["uri"]
+        list_of_artist_uri.append(this_artists_uri)
+
+        list_of_songs = result["name"]
+        list_of_song_names.append(list_of_songs)
+
+        song_uri = result["uri"]
+        list_of_song_uri.append(song_uri)
+
+        list_of_duration = result["duration_ms"]
+        list_of_durations_ms.append(list_of_duration)
+
+        this_album = result["album"]["name"]
+        list_of_albums.append(this_album)
+
+        this_release_date = result["album"]["release_date"]
+        list_of_release_dates.append(this_release_date)
+
+        this_album_artwork = result["album"]["images"][0]["url"]
+        list_of_artwork.append(this_album_artwork)
+        #webbrowser.open(this_album_artwork)
+
+        song_popularity = result["popularity"]
+        list_of_popularity.append(song_popularity)
+
+        #print(this_artists_name + ': ' + list_of_songs + ", " + this_album + ", released: " + this_release_date + ", " + this_album_artwork)
+
     
     #only metadata i need
     top_songs_pretty = pd.DataFrame(
@@ -163,6 +194,7 @@ def get_token(session):
     token_valid = True
     return token_info, token_valid
 
+#dont work
 def fillData(list_of_results):
     for result in list_of_results:
 
