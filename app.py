@@ -37,12 +37,7 @@ client_credentials_manager = SpotifyClientCredentials(client_id=clientID, client
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 scope = 'user-top-read'
 # Erase .cache to prompt for user permission
-try:
-    token = util.prompt_for_user_token(username, scope) # add scope
-except (AttributeError, JSONDecodeError):
-    os.remove(".cache")
-    token = util.prompt_for_user_token(username, scope) # add scope
-
+token = util.prompt_for_user_token(username, scope) # add scope
 
 if token:
     sp = spotipy.Spotify(auth=token)
