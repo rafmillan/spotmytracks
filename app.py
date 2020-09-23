@@ -20,8 +20,8 @@ clientID ="4b3a1682d17c4711b3943fdc7eec3cde"
 secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
 
 # Make sure you add this to Redirect URIs in the setting of the application dashboard
-#REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
-REDIRECT_URI = "https://spotmytracks.herokuapp.com/api_callback"
+REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
+#REDIRECT_URI = "https://spotmytracks.herokuapp.com/api_callback"
 
 os.environ['SPOTIPY_CLIENT_ID']= clientID
 os.environ['SPOTIPY_CLIENT_SECRET']= secretID
@@ -63,8 +63,8 @@ def api_callback():
 @app.route("/index")
 def index():
     print("/index")
+
     username = ""
-    #token = util.prompt_for_user_token(username, SCOPE)
     list_of_results = []
     list_of_artist_names = []
     list_of_artist_uri = []
@@ -158,9 +158,12 @@ def index():
     })
 
     all_songs_saved = all_songs_meta.to_csv('top10_songs.csv')
-    
+    os.remove("top10_data.json")
+    os.remove("top10_songs.csv")
+    os.remove("user_data.json")
+    os.system("rm -rf .cache")
     return render_template("index.html", column_names=top_songs_pretty.columns.values, row_data=top_songs_pretty.values.tolist(),
-                           link_column="", zip=zip)
+                           link_column="", zip=zip, user=user_display_name)
 
 # Checks to see if token is valid and gets a new token if not
 def get_token(session):
