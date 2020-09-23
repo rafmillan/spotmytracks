@@ -1,0 +1,17 @@
+[
+    {
+        "display_name": "klaus-rr",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/user/klaus-rr"
+        },
+        "followers": {
+            "href": null,
+            "total": 0
+        },
+        "href": "https://api.spotify.com/v1/users/klaus-rr",
+        "id": "klaus-rr",
+        "images": [],
+        "type": "user",
+        "uri": "spotify:user:klaus-rr"
+    }
+]
