@@ -11,7 +11,8 @@ from flask import Flask, render_template, url_for, request, redirect, session
 import time
 
 app = Flask(__name__)
-app.secret_key = '4b3a1682d17c4711b3943fdc7eec3cde'
+key = str(time.time())
+app.secret_key = key
 
 API_BASE = 'https://accounts.spotify.com'
 clientID ="4b3a1682d17c4711b3943fdc7eec3cde" 
@@ -20,11 +21,11 @@ secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
 os.environ['SPOTIPY_CLIENT_ID']= clientID
 os.environ['SPOTIPY_CLIENT_SECRET']= secretID
 #os.environ['SPOTIPY_REDIRECT_URI']='http://127.0.0.1:5000/api_callback'
-os.environ['SPOTIPY_REDIRECT_URI']='https://spotmytracks.herokuapp.com/'
+os.environ['SPOTIPY_REDIRECT_URI']='https://spotmytracks.herokuapp.com/api_callback'
 
 # Make sure you add this to Redirect URIs in the setting of the application dashboard
 #REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
-REDIRECT_URI = "https://spotmytracks.herokuapp.com/"
+REDIRECT_URI = "https://spotmytracks.herokuapp.com/api_callback"
 SCOPE = 'playlist-modify-private,playlist-modify-public,user-top-read'
 
 # Set this to True for testing but you probaly want it set to False in production.
@@ -34,14 +35,33 @@ SHOW_DIALOG = True
 # the user logs in and authorizes access
 @app.route("/")
 def verify():
+    print("verify()")
     # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
     sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
     auth_url = sp_oauth.get_authorize_url()
     print(auth_url)
     return redirect(auth_url)
 
+# authorization-code-flow Step 2.
+# Have your application request refresh and access tokens;
+# Spotify returns access and refresh tokens
+@app.route("/api_callback")
+def api_callback():
+    print("/api_callback")
+    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    session.clear()
+    code = request.args.get('code')
+    token_info = sp_oauth.get_access_token(code)
+
+    # Saving the access token along with all other token related info
+    session["token_info"] = token_info
+    return redirect("index")
+
+
 @app.route("/index")
 def index():
+    print("/index")
     username = ""
     token = util.prompt_for_user_token(username, SCOPE)
     list_of_results = []
@@ -136,46 +156,6 @@ def index():
     return render_template("index.html", column_names=top_songs_pretty.columns.values, row_data=top_songs_pretty.values.tolist(),
                            link_column="Patient ID", zip=zip)
     #return render_template("index.html")
-
-# authorization-code-flow Step 2.
-# Have your application request refresh and access tokens;
-# Spotify returns access and refresh tokens
-@app.route("/api_callback")
-def api_callback():
-    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
-    session.clear()
-    code = request.args.get('code')
-    token_info = sp_oauth.get_access_token(code)
-
-    # Saving the access token along with all other token related info
-    session["token_info"] = token_info
-    return redirect("index")
-
-# Checks to see if token is valid and gets a new token if not
-def get_token(session):
-    token_valid = False
-    token_info = session.get("token_info", {})
-
-    # Checking if the session already has a token stored
-    if not (session.get('token_info', False)):
-        token_valid = False
-        return token_info, token_valid
-
-    # Checking if token has expired
-    now = int(time.time())
-    is_token_expired = session.get('token_info').get('expires_at') - now < 60
-
-    # Refreshing token if it has expired
-    if (is_token_expired):
-        # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
-        sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
-        token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
-
-        token_valid = True
-    return token_info, token_valid
-
-
 
 
 
