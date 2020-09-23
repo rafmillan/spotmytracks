@@ -20,8 +20,8 @@ clientID ="4b3a1682d17c4711b3943fdc7eec3cde"
 secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
 
 # Make sure you add this to Redirect URIs in the setting of the application dashboard
-REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
-#REDIRECT_URI = "https://spotmytracks.herokuapp.com/api_callback"
+#REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
+REDIRECT_URI = "https://spotmytracks.herokuapp.com/api_callback"
 
 os.environ['SPOTIPY_CLIENT_ID']= clientID
 os.environ['SPOTIPY_CLIENT_SECRET']= secretID
