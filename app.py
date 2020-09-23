@@ -12,13 +12,13 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-clientID ="4b3a1682d17c4711b3943fdc7eec3cde" 
-secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
+clientID ="0beba31f165c456385efe95d424e27c6" 
+secretID = "da77af2c7a9746ec8f019103539faef0"
 
 os.environ['SPOTIPY_CLIENT_ID']= clientID
 os.environ['SPOTIPY_CLIENT_SECRET']= secretID
 
-os.environ['SPOTIPY_REDIRECT_URI']='http://localhost:8888/callback'
+os.environ['SPOTIPY_REDIRECT_URI']='https://spotmytracks.herokuapp.com/'
 
 list_of_results = []
 list_of_artist_names = []
