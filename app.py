@@ -19,10 +19,12 @@ secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
 
 os.environ['SPOTIPY_CLIENT_ID']= clientID
 os.environ['SPOTIPY_CLIENT_SECRET']= secretID
-os.environ['SPOTIPY_REDIRECT_URI']='http://127.0.0.1:5000/api_callback'
+#os.environ['SPOTIPY_REDIRECT_URI']='http://127.0.0.1:5000/api_callback'
+os.environ['SPOTIPY_REDIRECT_URI']='https://spotmytracks.herokuapp.com/'
 
 # Make sure you add this to Redirect URIs in the setting of the application dashboard
-REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
+#REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
+REDIRECT_URI = "https://spotmytracks.herokuapp.com/"
 SCOPE = 'playlist-modify-private,playlist-modify-public,user-top-read'
 
 # Set this to True for testing but you probaly want it set to False in production.
@@ -171,8 +173,6 @@ def get_token(session):
         token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
 
         token_valid = True
-    
-
     return token_info, token_valid
 
 
