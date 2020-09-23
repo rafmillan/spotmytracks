@@ -1,0 +1,23 @@
+[
+    {
+        "display_name": "raf",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/user/joke.exe"
+        },
+        "followers": {
+            "href": null,
+            "total": 13
+        },
+        "href": "https://api.spotify.com/v1/users/joke.exe",
+        "id": "joke.exe",
+        "images": [
+            {
+                "height": null,
+                "url": "https://i.scdn.co/image/ab6775700000ee8536d6195f4da81a26b75ec48b",
+                "width": null
+            }
+        ],
+        "type": "user",
+        "uri": "spotify:user:joke.exe"
+    }
+]
