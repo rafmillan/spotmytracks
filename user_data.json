@@ -10,7 +10,13 @@
         },
         "href": "https://api.spotify.com/v1/users/klaus-rr",
         "id": "klaus-rr",
-        "images": [],
+        "images": [
+            {
+                "height": null,
+                "url": "https://i.scdn.co/image/ab6775700000ee85a9de1fbe6e525ab788eca1e0",
+                "width": null
+            }
+        ],
         "type": "user",
         "uri": "spotify:user:klaus-rr"
     }

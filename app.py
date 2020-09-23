@@ -7,6 +7,10 @@ import seaborn as sb
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
+from flask import Flask, render_template, url_for, request, redirect
+from datetime import datetime
+
+app = Flask(__name__)
 
 clientID ="4b3a1682d17c4711b3943fdc7eec3cde" 
 secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
@@ -93,14 +97,20 @@ for result in list_of_results:
 
     this_album_artwork = result["album"]["images"][0]["url"]
     list_of_artwork.append(this_album_artwork)
-    webbrowser.open(this_album_artwork)
+    #webbrowser.open(this_album_artwork)
 
     song_popularity = result["popularity"]
     list_of_popularity.append(song_popularity)
 
-    print(this_artists_name + ': ' + list_of_songs + ", " + this_album + ", released: " + this_release_date + ", " + this_album_artwork)
+    #print(this_artists_name + ': ' + list_of_songs + ", " + this_album + ", released: " + this_release_date + ", " + this_album_artwork)
+top_songs_pretty = pd.DataFrame(
+{   'artist': list_of_artist_names,
+    'song': list_of_song_names,
+    'album': list_of_albums,
+    'artwork': list_of_artwork,
+})
 
-all_songs = pd.DataFrame(
+all_songs_meta = pd.DataFrame(
 {'artist': list_of_artist_names,
     'artist_uri': list_of_artist_uri,
     'song': list_of_song_names,
@@ -112,17 +122,15 @@ all_songs = pd.DataFrame(
     'popularity': list_of_popularity 
 })
 
-all_songs_saved = all_songs.to_csv('top10_songs.csv')
+
+all_songs_saved = all_songs_meta.to_csv('top10_songs.csv')
 
 
+@app.route('/')
+def index():
+    return render_template("index.html", column_names=top_songs_pretty.columns.values, row_data=top_songs_pretty.values.tolist(),
+                           link_column="Patient ID", zip=zip)
 
-# lz_uri = 'spotify:artist:48dgx7iGqLQ3E5KO3pzd94'
 
-# spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
-# results = spotify.artist_top_tracks(lz_uri)
-
-# for track in results['tracks'][:10]:
-#     print('track    : ' + track['name'])
-#     print('audio    : ' + track['preview_url'])
-#     print('cover art: ' + track['album']['images'][0]['url'])
-#     print()
+if __name__ == "__main__":
+    app.run(debug=True)

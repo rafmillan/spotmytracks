@@ -6,24 +6,29 @@
 
 {% block body %}
 <div class="content">
-    <h1 style="text-align: center">Task Master</h1>
-    {% if tasks|length < 1 %}
-    <h4 style="text-align: center">There are no tasks. Create one below!</h4>
-    {% else %}
+    <h1 style="text-align: center">spotmytracks</h1>
     <table>
         <tr>
-            <th>Task</th>
-            <th>Added</th>
-            <th>Actions</th>
+            {% for col in column_names %}
+            <th>{{col}}</th>
+            {% endfor %}
         </tr>
-        {% for task in tasks %}
-            <tr>
-                <td>{{ task.content }}</td>
-                <td>{{ task.date_created.date() }}</td>
-                <th>whoah</th>
-            </tr>
+        {% for row in row_data %}
+        <tr>
+            {% for col, row_ in zip(column_names, row) %}
+            {% if col == link_column %}
+            <td>
+                <button type="submit" value={{ row_ }} name="person_id" form="patient_form" class="patient_button">
+                    {{ row_ }}
+                </button>
+            </td>
+            {% else %}
+            <td>{{row_}}</td>
+            {% endif %}
+            {% endfor %}
+        </tr>
         {% endfor %}
+    
     </table>
-    {% endif %}
 </div>
 {% endblock %}

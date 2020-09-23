@@ -8,22 +8,20 @@ body, html {
     width: 400px;
 }
 
-table, td, th {
-    border: 1px solid #aaa;
-}
-
 table {
+    font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
 }
 
-th {
-    height: 30px;
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
 }
 
-td {
-    text-align: center;
-    padding: 5px;
+tr:nth-child(even) {
+    background-color: #dddddd;
 }
 
 .form {
