@@ -82,10 +82,55 @@ def index():
         return redirect('/')
     data = request.form
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    results = sp.current_user_top_tracks(limit=10,offset=0,time_range='medium_term')
     user = sp.current_user()
     userList = []
     userList.append(user)
+    with open('user_data.json', 'w', encoding='utf-8') as f:
+        json.dump(userList, f, ensure_ascii=False, indent=4)
+
+    with open('user_data.json') as l:
+        userData = json.load(l)
+
+    user_display_name = userData[0]["display_name"]
+    print(user_display_name+ "'s Top Songs!" )
+
+    #clean up or else stays stuck on a user
+    os.remove("user_data.json")
+    os.system("rm -rf .cache")
+
+    return render_template("index.html", user=user_display_name)
+
+# authorization-code-flow Step 3.
+# Use the access token to access the Spotify Web API;
+# Spotify returns requested data
+@app.route("/go", methods=['POST'])
+def go():
+
+    username = ""
+    list_of_results = []
+    list_of_artist_names = []
+    list_of_artist_uri = []
+    list_of_song_names = []
+    list_of_song_uri = []
+    list_of_durations_ms = []
+    list_of_explicit = []
+    list_of_albums = []
+    list_of_popularity = []
+    list_of_artwork = []
+    list_of_release_dates = []
+
+    session['token_info'], authorized = get_token(session)
+    session.modified = True
+    if not authorized:
+        return redirect('/')
+    data = request.form
+    sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
+    results = sp.current_user_top_tracks(limit=10,offset=0,time_range=data['time_range'])
+    time_name = str(data['time_range'])
+    user = sp.current_user()
+    userList = []
+    userList.append(user)
+
     with open('user_data.json', 'w', encoding='utf-8') as f:
         json.dump(userList, f, ensure_ascii=False, indent=4)
 
@@ -166,9 +211,13 @@ def index():
     os.remove("top10_songs.csv")
     os.remove("user_data.json")
     os.system("rm -rf .cache")
-
+   
+    # print(json.dumps(response))
+    #return render_template("results.html", data=data)
+    print(time_name)
     return render_template("index.html", column_names=top_songs_pretty.columns.values, row_data=top_songs_pretty.values.tolist(),
-                           link_column="", zip=zip, user=user_display_name)
+                           link_column="", zip=zip, user=user_display_name, time_name=time_name)
+   
 
 # Checks to see if token is valid and gets a new token if not
 def get_token(session):

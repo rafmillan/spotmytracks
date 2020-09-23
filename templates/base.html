@@ -8,6 +8,14 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+    {% block tittle %}{% endblock %}
+</body>
+
+<form action="/go" method="post">
+    {% block form %}{% endblock %}
+</form>
+
+<body>
     {% block body %}{% endblock %}
 </body>
 </html>
