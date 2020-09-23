@@ -97,3 +97,16 @@
     </table>
 </div>
 {% endblock %}
+
+{% block footer %}
+    {% if request.endpoint == 'go'  %}
+        <p><b>by: Rafael Millan<br />
+            twitter: @thatsraf<br />
+        <a href="https://rafmillan.github.io">rafmillan.github.io</a></b></p>
+    {% else %}
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        <p><b>by: Rafael Millan<br />
+            twitter: @thatsraf<br />
+        <a href="https://rafmillan.github.io">rafmillan.github.io</a></b></p>
+    {% endif %}
+ {% endblock %}

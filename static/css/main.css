@@ -31,3 +31,7 @@ tr:nth-child(even) {
 #content {
     width: 70%;
 }
+
+footer {
+    text-align: center;
+  }
