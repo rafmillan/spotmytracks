@@ -7,39 +7,53 @@ import seaborn as sb
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
-from flask import Flask, render_template, url_for, request, redirect
-from datetime import datetime
+from flask import Flask, render_template, url_for, request, redirect, session
+import time
 
 app = Flask(__name__)
+app.secret_key = '4b3a1682d17c4711b3943fdc7eec3cde'
 
-clientID ="0beba31f165c456385efe95d424e27c6" 
-secretID = "da77af2c7a9746ec8f019103539faef0"
+API_BASE = 'https://accounts.spotify.com'
+clientID ="4b3a1682d17c4711b3943fdc7eec3cde" 
+secretID = "7f3bcf6e081846b88b6dcf3a658203a5"
 
 os.environ['SPOTIPY_CLIENT_ID']= clientID
 os.environ['SPOTIPY_CLIENT_SECRET']= secretID
+os.environ['SPOTIPY_REDIRECT_URI']='http://127.0.0.1:5000/api_callback'
 
-os.environ['SPOTIPY_REDIRECT_URI']='https://spotmytracks.herokuapp.com/'
+# Make sure you add this to Redirect URIs in the setting of the application dashboard
+REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
+SCOPE = 'playlist-modify-private,playlist-modify-public,user-top-read'
 
-list_of_results = []
-list_of_artist_names = []
-list_of_artist_uri = []
-list_of_song_names = []
-list_of_song_uri = []
-list_of_durations_ms = []
-list_of_explicit = []
-list_of_albums = []
-list_of_popularity = []
-list_of_artwork = []
-list_of_release_dates = []
+# Set this to True for testing but you probaly want it set to False in production.
+SHOW_DIALOG = True
 
-username = ""
-client_credentials_manager = SpotifyClientCredentials(client_id=clientID, client_secret=secretID) 
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-scope = 'user-top-read'
-# Erase .cache to prompt for user permission
-token = util.prompt_for_user_token(username, scope) # add scope
+# authorization-code-flow Step 1. Have your application request authorization; 
+# the user logs in and authorizes access
+@app.route("/")
+def verify():
+    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    auth_url = sp_oauth.get_authorize_url()
+    print(auth_url)
+    return redirect(auth_url)
 
-if token:
+@app.route("/index")
+def index():
+    username = ""
+    token = util.prompt_for_user_token(username, SCOPE)
+    list_of_results = []
+    list_of_artist_names = []
+    list_of_artist_uri = []
+    list_of_song_names = []
+    list_of_song_uri = []
+    list_of_durations_ms = []
+    list_of_explicit = []
+    list_of_albums = []
+    list_of_popularity = []
+    list_of_artwork = []
+    list_of_release_dates = []
+
     sp = spotipy.Spotify(auth=token)
     results = sp.current_user_top_tracks(limit=10,offset=0,time_range='medium_term')
     user = sp.current_user()
@@ -53,78 +67,117 @@ if token:
         list.append(results)
         with open('top10_data.json', 'w', encoding='utf-8') as f:
             json.dump(list, f, ensure_ascii=False, indent=4)
+    
+    with open('top10_data.json') as f:
+        data = json.load(f)
 
-else:
-    print("Can't get token for", username)
+    with open('user_data.json') as l:
+        userData = json.load(l)
 
-with open('top10_data.json') as f:
-    data = json.load(f)
+    list_of_results = data[0]["items"]
+    user_display_name = userData[0]["display_name"]
+    print(user_display_name+ "'s Top Songs!" )
 
-with open('user_data.json') as l:
-    userData = json.load(l)
+    for result in list_of_results:
 
-list_of_results = data[0]["items"]
-user_display_name = userData[0]["display_name"]
-print(user_display_name+ "'s Top Songs!" )
+        this_artists_name = result["artists"][0]["name"]
+        list_of_artist_names.append(this_artists_name)
 
-for result in list_of_results:
+        this_artists_uri = result["artists"][0]["uri"]
+        list_of_artist_uri.append(this_artists_uri)
 
-    this_artists_name = result["artists"][0]["name"]
-    list_of_artist_names.append(this_artists_name)
+        list_of_songs = result["name"]
+        list_of_song_names.append(list_of_songs)
 
-    this_artists_uri = result["artists"][0]["uri"]
-    list_of_artist_uri.append(this_artists_uri)
+        song_uri = result["uri"]
+        list_of_song_uri.append(song_uri)
 
-    list_of_songs = result["name"]
-    list_of_song_names.append(list_of_songs)
+        list_of_duration = result["duration_ms"]
+        list_of_durations_ms.append(list_of_duration)
 
-    song_uri = result["uri"]
-    list_of_song_uri.append(song_uri)
+        this_album = result["album"]["name"]
+        list_of_albums.append(this_album)
 
-    list_of_duration = result["duration_ms"]
-    list_of_durations_ms.append(list_of_duration)
+        this_release_date = result["album"]["release_date"]
+        list_of_release_dates.append(this_release_date)
 
-    this_album = result["album"]["name"]
-    list_of_albums.append(this_album)
+        this_album_artwork = result["album"]["images"][0]["url"]
+        list_of_artwork.append(this_album_artwork)
+        #webbrowser.open(this_album_artwork)
 
-    this_release_date = result["album"]["release_date"]
-    list_of_release_dates.append(this_release_date)
+        song_popularity = result["popularity"]
+        list_of_popularity.append(song_popularity)
 
-    this_album_artwork = result["album"]["images"][0]["url"]
-    list_of_artwork.append(this_album_artwork)
-    #webbrowser.open(this_album_artwork)
+        #print(this_artists_name + ': ' + list_of_songs + ", " + this_album + ", released: " + this_release_date + ", " + this_album_artwork)
+    
+    top_songs_pretty = pd.DataFrame(
+    {   'artist': list_of_artist_names,
+        'song': list_of_song_names,
+        'album': list_of_albums,
+        'artwork': list_of_artwork,
+    })
 
-    song_popularity = result["popularity"]
-    list_of_popularity.append(song_popularity)
+    all_songs_meta = pd.DataFrame(
+    {'artist': list_of_artist_names,
+        'artist_uri': list_of_artist_uri,
+        'song': list_of_song_names,
+        'song_uri': list_of_song_uri,
+        'duration_ms': list_of_durations_ms,
+        'album': list_of_albums,
+        'release_date': list_of_release_dates,
+        'artwork': list_of_artwork,
+        'popularity': list_of_popularity 
+    })
 
-    #print(this_artists_name + ': ' + list_of_songs + ", " + this_album + ", released: " + this_release_date + ", " + this_album_artwork)
-top_songs_pretty = pd.DataFrame(
-{   'artist': list_of_artist_names,
-    'song': list_of_song_names,
-    'album': list_of_albums,
-    'artwork': list_of_artwork,
-})
-
-all_songs_meta = pd.DataFrame(
-{'artist': list_of_artist_names,
-    'artist_uri': list_of_artist_uri,
-    'song': list_of_song_names,
-    'song_uri': list_of_song_uri,
-    'duration_ms': list_of_durations_ms,
-    'album': list_of_albums,
-    'release_date': list_of_release_dates,
-    'artwork': list_of_artwork,
-    'popularity': list_of_popularity 
-})
-
-
-all_songs_saved = all_songs_meta.to_csv('top10_songs.csv')
-
-
-@app.route('/')
-def index():
+    all_songs_saved = all_songs_meta.to_csv('top10_songs.csv')
+    
     return render_template("index.html", column_names=top_songs_pretty.columns.values, row_data=top_songs_pretty.values.tolist(),
                            link_column="Patient ID", zip=zip)
+    #return render_template("index.html")
+
+# authorization-code-flow Step 2.
+# Have your application request refresh and access tokens;
+# Spotify returns access and refresh tokens
+@app.route("/api_callback")
+def api_callback():
+    # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+    sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
+    session.clear()
+    code = request.args.get('code')
+    token_info = sp_oauth.get_access_token(code)
+
+    # Saving the access token along with all other token related info
+    session["token_info"] = token_info
+    return redirect("index")
+
+# Checks to see if token is valid and gets a new token if not
+def get_token(session):
+    token_valid = False
+    token_info = session.get("token_info", {})
+
+    # Checking if the session already has a token stored
+    if not (session.get('token_info', False)):
+        token_valid = False
+        return token_info, token_valid
+
+    # Checking if token has expired
+    now = int(time.time())
+    is_token_expired = session.get('token_info').get('expires_at') - now < 60
+
+    # Refreshing token if it has expired
+    if (is_token_expired):
+        # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
+        sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = clientID, client_secret = secretID, redirect_uri = REDIRECT_URI, scope = SCOPE)
+        token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
+
+        token_valid = True
+    
+
+    return token_info, token_valid
+
+
+
+
 
 
 if __name__ == "__main__":
