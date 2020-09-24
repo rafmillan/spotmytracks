@@ -63,19 +63,6 @@ def api_callback():
 def index():
     print("/index")
 
-    username = ""
-    list_of_results = []
-    list_of_artist_names = []
-    list_of_artist_uri = []
-    list_of_song_names = []
-    list_of_song_uri = []
-    list_of_durations_ms = []
-    list_of_explicit = []
-    list_of_albums = []
-    list_of_popularity = []
-    list_of_artwork = []
-    list_of_release_dates = []
-
     session['token_info'], authorized = get_token(session)
     session.modified = True
     if not authorized:
