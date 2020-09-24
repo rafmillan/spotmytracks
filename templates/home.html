@@ -23,36 +23,3 @@
 
 </form>
 {% endblock %}
-
-{% block body %}
-<div class="content">
-    {% if request.endpoint == 'go'  %}
-        {% if time_name == 'short_term'  %}
-            <h2 style="text-align: center">{{user}}'s top tracks of the last few weeks</h2>
-        {% elif time_name == 'medium_term'  %}
-            <h2 style="text-align: center">{{user}}'s top tracks of the last few months</h2>
-        {% elif time_name == 'long_term'  %}
-            <h2 style="text-align: center">{{user}}'s top tracks of all time</h2>
-        {% endif %}
-    {% endif %}
-    <table>
-        <tr>
-            {% for col in column_names %}
-            <th>{{col}}</th>
-            {% endfor %}
-        </tr>
-        {% for row in row_data %}
-        <tr>
-            {% for col, row_ in zip(column_names, row) %}
-                {% if col == "artwork" %}
-                    <td> <img src="{{row_}}" alt="artwork" style="width:100px;height:100px;"> </td>
-                {% else %}
-                    <td>{{row_}}</td>
-                {% endif %}
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    
-    </table>
-</div>
-{% endblock %}
