@@ -178,10 +178,11 @@ def go():
     
     #only metadata i need
     top_songs_pretty = pd.DataFrame(
-    {   'artist': list_of_artist_names,
+    {   'artwork': list_of_artwork,
         'song': list_of_song_names,
+        'artist': list_of_artist_names,
         'album': list_of_albums,
-        'artwork': list_of_artwork,
+        
     })
 
     #full metadata of song

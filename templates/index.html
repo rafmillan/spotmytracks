@@ -41,8 +41,8 @@
         <tr>
             {% for col, row_ in zip(column_names, row) %}
                 {% if col == "artwork" %}
-                    <td> <img src="{{row_}}" alt="artwork" style="width:90px;height:90px;"> </td>
-                {% else %}
+                    <td> <img src="{{row_}}" alt="artwork" style="width:100px;height:100px;"> </td>
+                {% elif col != "album" %}
                     <td>{{row_}}</td>
                 {% endif %}
             {% endfor %}
