@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=.9, maximum-scale.9, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?version=30">
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -15,10 +15,18 @@
     {% block form %}{% endblock %}
 </form>
 
+<form action="/login" method="post">
+    {% block login %}{% endblock %}
+</form>
+
+
 <body>
     {% block body %}{% endblock %}
 </body>
-<footer style="font-size:10px;text-align: center;font-family:Courier New;", font-family='sans-serif'>
-    {% block footer %}{% endblock %}
+<footer style="text-align: center">
+    {% block footer %}
+        <p>Made by <a href="https://twitter.com/thatsraf">Rafael Millan</a>.<br />
+        <a href="https://rafmillan.github.io">rafmillan.github.io</a></p>
+    {% endblock %}
 </footer>
 </html>

@@ -1,6 +1,53 @@
 body, html {
+    background-color: #191414;
     margin: 0;
+    color: #dddddd;
     font-family: sans-serif;
+}
+h1{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    color: #dddddd;
+    font-weight: 550;
+    font-size: 50px;
+    margin-bottom: 5px;
+    padding-bottom: 0px;
+}
+h3{
+    margin-top: 0;
+    color: #dddddd;
+    font-weight: 400;
+    /* color: #303030; */
+}
+
+h2{
+    margin-top: 0;
+    color: #dddddd;
+    font-weight: normal;
+    /* color: #303030; */
+}
+
+.btn{
+    background-color: #1DB954;
+    color: #FFFFFF;
+    font-size: 20px;
+    border: none;
+    width: 200px;
+    height: 50px;
+    border-radius: 15px;
+}
+
+.btn:hover{
+    background: #1DB954;
+    background-image: -webkit-linear-gradient(top, #1DB954, #3D94F6);
+    background-image: -moz-linear-gradient(top,#1DB954, #3D94F6);
+    background-image: -ms-linear-gradient(top, #1DB954, #3D94F6);
+    background-image: -o-linear-gradient(top ,#1DB954, #3D94F6);
+    background-image: linear-gradient(to bottom, #1DB954, #3D94F6);
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    text-decoration: none;
 }
 
 .content {
@@ -18,14 +65,16 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+    color: #dddddd
 }
 
-tr:nth-child(even) {
+/* tr:nth-child(even) {
     background-color: #dddddd;
-}
+} */
 
 .form {
     margin-top: 20px;
+    color: #dddddd;
 }
 
 #content {
@@ -33,5 +82,11 @@ tr:nth-child(even) {
 }
 
 footer {
+    font-size: 10px;
+    font-weight: 100;
+    color: #dddddd;
     text-align: center;
-  }
+}
+a{
+    color: #1DB954;
+}

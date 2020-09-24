@@ -32,9 +32,15 @@ SCOPE = 'playlist-modify-private,playlist-modify-public,user-top-read'
 # Set this to True for testing but you probaly want it set to False in production.
 SHOW_DIALOG = True
 
+#homepage not loggen in
+@app.route("/")
+def home():
+    print("home")
+    return render_template("home.html")
+
 # authorization-code-flow Step 1. Have your application request authorization; 
 # the user logs in and authorizes access
-@app.route("/")
+@app.route("/login", methods=['POST'])
 def verify():
     print("verify()")
     # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
