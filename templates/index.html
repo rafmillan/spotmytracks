@@ -19,6 +19,7 @@
             <button type="submit" class="btn" style="margin:5px;" name="time_range" value="short_term">Last 4 weeks</button><br>
             <button type="submit" class="btn" style="margin:5px;"name="time_range" value="medium_term">Last 6 Months</button><br>
             <button type="submit" class="btn" style="margin:5px;" name="time_range" value="long_term">All Time</button><br>
+            <button type="submit" class="btn" style="margin:5px;" name="time_range" value="long_term">Advanced Stats</button><br>
         </center>
     <br />
     </div>
@@ -34,6 +35,8 @@
             <h2 style="text-align: center">{{user}}'s top tracks of the last few months</h2>
         {% elif time_name == 'long_term'  %}
             <h2 style="text-align: center">{{user}}'s top tracks of all time</h2>
+        {% elif time_name == 'all_time'  %}
+            <h2 style="text-align: center">{{user}}'s Advanced Stats</h2>
         {% endif %}
     {% endif %}
     <table>
