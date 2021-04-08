@@ -126,6 +126,10 @@ def go():
 
     with open('user_data.json', 'w', encoding='utf-8') as f:
         json.dump(userList, f, ensure_ascii=False, indent=4)
+    
+    if(time_name == 'adv_stat'):
+        #do nothing for now
+    else:
 
     for song in range(10):
         list = []
